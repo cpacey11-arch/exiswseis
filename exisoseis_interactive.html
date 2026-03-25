@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Κεφ. 26 — Εξισώσεις με Άγνωστο Προσθετέο</title>
+<style>
+:root {
+  --orange: #E97E00;
+  --navy: #1F4E79;
+  --blue: #2E75B6;
+  --red: #C00000;
+  --green: #1F7A1F;
+  --lightblue: #EBF3F9;
+  --lightorange: #FFF3E0;
+  --bg: #F4F6F9;
+}
+* { box-sizing: border-box; margin:0; padding:0; }
+body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg); color: #222; font-size:15px; line-height:1.6; }
+
+header {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--blue) 100%);
+  color: white; padding: 24px 20px 18px; text-align:center;
+}
+header h1 { font-size:1.6em; margin-bottom:4px; }
+header .sub { font-size:0.92em; opacity:0.85; }
+header .tagline { font-size:1.05em; font-style:italic; color:#FFD580; margin-top:4px; }
+
+.container { max-width:860px; margin:0 auto; padding:20px 14px; }
+
+/* TABS */
+.tabs { display:flex; flex-wrap:wrap; gap:4px; border-bottom:3px solid var(--blue); margin-bottom:22px; }
+.tab-btn { padding:8px 14px; border:none; background:#ddd; cursor:pointer; border-radius:6px 6px 0 0;
+  font-family:inherit; font-size:0.87em; font-weight:bold; color:#555; transition:all 0.2s; }
+.tab-btn.active { background:var(--blue); color:white; }
+.tab-panel { display:none; }
+.tab-panel.active { display:block; }
+
+/* CARDS */
+.card { background:white; border-radius:10px; box-shadow:0 2px 8px rgba(0,0,0,0.08); margin-bottom:22px; overflow:hidden; }
+.card-header { padding:13px 18px; font-weight:bold; font-size:1em; display:flex; align-items:center; gap:8px; }
+.card-header.orange { background:var(--orange); color:white; }
+.card-header.navy { background:var(--navy); color:white; }
+.card-header.green { background:var(--green); color:white; }
+.card-body { padding:18px; }
+
+/* THEORY */
+.theory-box { background:var(--lightorange); border-left:5px solid var(--orange); padding:12px 16px; border-radius:0 8px 8px 0; margin:12px 0; }
+.theory-box p { margin:4px 0; font-size:0.94em; }
+.steps-list { counter-reset:steps; padding:8px 0; }
+.steps-list li { counter-increment:steps; list-style:none; padding:5px 0 5px 36px; position:relative; font-size:0.94em; }
+.steps-list li::before { content:counter(steps); position:absolute; left:0; width:24px; height:24px; background:var(--orange); color:white; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:0.85em; top:6px; }
+.example-table { width:100%; border-collapse:collapse; margin:12px 0; font-size:0.92em; }
+.example-table th { background:var(--navy); color:white; padding:8px; text-align:center; border:1px solid #aaa; }
+.example-table td { padding:7px 10px; border:1px solid #ccc; text-align:center; }
+.example-table tr:nth-child(odd) td { background:white; }
+.example-table tr:nth-child(even) td { background:var(--lightblue); }
+.correct-val { color:var(--green); font-weight:bold; }
+
+/* EXERCISE INSTRUCTIONS */
+.instructions { background:var(--lightblue); border-radius:6px; padding:10px 14px; margin-bottom:14px; font-style:italic; color:#444; font-size:0.92em; }
+
+/* FILL IN */
+.fill-row { display:flex; align-items:baseline; gap:6px; flex-wrap:wrap; margin:10px 0; }
+.fill-row label { font-weight:600; min-width:20px; }
+.fill-input { border:none; border-bottom:2px solid var(--blue); padding:2px 6px; font-size:1em; font-family:inherit; width:100px; background:transparent; outline:none; transition:border-color 0.2s; text-align:center; }
+.fill-input:focus { border-color:var(--orange); }
+.fill-input.ok { border-color:var(--green); color:var(--green); background:#E8F5E9; border-radius:4px 4px 0 0; }
+.fill-input.err { border-color:var(--red); color:var(--red); background:#FFEBEE; border-radius:4px 4px 0 0; }
+
+/* PROBLEM BOX */
+.prob-box { background:var(--lightblue); border-left:5px solid var(--navy); padding:14px 16px; border-radius:0 8px 8px 0; margin:10px 0; }
+.prob-box p { margin:4px 0; font-size:0.95em; }
+.answer-row { display:flex; align-items:center; gap:8px; margin-top:10px; flex-wrap:wrap; }
+.answer-row span { font-weight:600; font-size:0.9em; }
+.answer-long { width:200px; }
+
+/* TRUE/FALSE */
+.tf-row { display:flex; align-items:center; gap:10px; padding:9px 12px; border-radius:8px; margin:8px 0; border:1px solid #ddd; background:white; }
+.tf-row:nth-child(even) { background:var(--lightblue); }
+.tf-text { flex:1; font-size:0.93em; }
+.tf-btns { display:flex; gap:6px; flex-shrink:0; }
+.tf-btn { padding:5px 14px; border:2px solid #aaa; border-radius:16px; background:white; cursor:pointer; font-size:0.85em; font-weight:bold; font-family:inherit; transition:all 0.15s; }
+.tf-btn.S:hover { border-color:var(--green); color:var(--green); }
+.tf-btn.L:hover { border-color:var(--red); color:var(--red); }
+.tf-btn.selected-S { background:#E8F5E9; border-color:var(--green); color:var(--green); }
+.tf-btn.selected-L { background:#FFEBEE; border-color:var(--red); color:var(--red); }
+.tf-btn.correct { background:#E8F5E9; border-color:var(--green); color:var(--green); font-weight:bold; }
+.tf-btn.wrong { background:#FFEBEE; border-color:var(--red); color:var(--red); text-decoration:line-through; }
+.tf-btn.disabled { pointer-events:none; opacity:0.4; }
+.tf-btn.disabled.correct { opacity:1; }
+
+/* BUTTONS */
+.check-btn { margin-top:14px; padding:9px 22px; background:var(--navy); color:white; border:none; border-radius:6px; cursor:pointer; font-size:0.94em; font-family:inherit; font-weight:bold; transition:background 0.2s; }
+.check-btn:hover { background:var(--blue); }
+.reset-btn { margin-top:8px; margin-left:10px; padding:9px 14px; background:#eee; color:#555; border:none; border-radius:6px; cursor:pointer; font-size:0.9em; font-family:inherit; }
+.reset-btn:hover { background:#ddd; }
+.score { display:inline-block; margin-top:12px; padding:8px 18px; border-radius:20px; font-weight:bold; font-size:0.94em; }
+.sc-great { background:#E8F5E9; color:var(--green); border:2px solid var(--green); }
+.sc-ok { background:#FFF8E1; color:#E65100; border:2px solid #F9A825; }
+.sc-low { background:#FFEBEE; color:var(--red); border:2px solid var(--red); }
+
+/* ── QUIZ GAME ── */
+#quiz-panel { }
+.quiz-header { text-align:center; margin-bottom:20px; }
+.quiz-header h2 { color:var(--navy); font-size:1.3em; }
+.progress-bar-wrap { background:#ddd; border-radius:10px; height:12px; margin:10px 0 4px; }
+.progress-bar { height:12px; border-radius:10px; background:var(--orange); transition:width 0.5s; }
+.q-counter { font-size:0.88em; color:#666; text-align:right; }
+
+.quiz-card { background:white; border-radius:14px; box-shadow:0 4px 16px rgba(0,0,0,0.12); padding:28px 24px; max-width:580px; margin:0 auto 16px; }
+.quiz-eq { font-size:2em; font-weight:bold; text-align:center; color:var(--navy); margin-bottom:22px; letter-spacing:2px; }
+.quiz-options { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.quiz-opt { padding:14px; border:2px solid #ccc; border-radius:10px; background:white; cursor:pointer; font-size:1.2em; font-weight:bold; text-align:center; font-family:inherit; transition:all 0.18s; color:#333; }
+.quiz-opt:hover { border-color:var(--blue); background:var(--lightblue); }
+.quiz-opt.correct { background:#E8F5E9; border-color:var(--green); color:var(--green); animation:pop 0.3s; }
+.quiz-opt.wrong { background:#FFEBEE; border-color:var(--red); color:var(--red); }
+.quiz-opt.disabled { pointer-events:none; }
+@keyframes pop { 0%{transform:scale(1)} 50%{transform:scale(1.07)} 100%{transform:scale(1)} }
+
+.quiz-feedback { text-align:center; margin-top:14px; font-size:1.05em; min-height:28px; font-weight:bold; }
+.quiz-feedback.ok { color:var(--green); }
+.quiz-feedback.no { color:var(--red); }
+
+.quiz-next { display:block; margin:16px auto 0; padding:10px 30px; background:var(--orange); color:white; border:none; border-radius:8px; cursor:pointer; font-size:1em; font-family:inherit; font-weight:bold; display:none; }
+.quiz-next:hover { background:#c86d00; }
+
+.quiz-result { text-align:center; padding:30px 20px; }
+.quiz-result .big-score { font-size:3em; font-weight:bold; color:var(--orange); }
+.quiz-result .msg { font-size:1.2em; margin:10px 0 20px; color:var(--navy); }
+.quiz-restart { padding:12px 28px; background:var(--navy); color:white; border:none; border-radius:8px; cursor:pointer; font-size:1em; font-family:inherit; font-weight:bold; }
+
+.stars { font-size:2em; margin:8px 0; }
+
+/* PROBLEM FILL */
+.prob-fill-block { margin:16px 0; }
+.prob-text { background:var(--lightblue); border-left:4px solid var(--navy); padding:12px 14px; border-radius:0 8px 8px 0; margin-bottom:10px; font-size:0.94em; line-height:1.7; }
+.prob-step { display:flex; align-items:center; gap:8px; margin:7px 0; flex-wrap:wrap; }
+.prob-step span { font-size:0.9em; font-weight:600; min-width:110px; }
+
+@media (max-width:580px) {
+  .quiz-options { grid-template-columns:1fr; }
+  header h1 { font-size:1.25em; }
+  .tab-btn { font-size:0.78em; padding:6px 9px; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>📐 Κεφάλαιο 26ο &mdash; Εξισώσεις</h1>
+  <div class="sub">Εξισώσεις στις οποίες ο άγνωστος είναι προσθετέος</div>
+  <div class="tagline">Μαθαίνω να ισορροπώ!</div>
+</header>
+
+<div class="container">
+<div class="tabs">
+  <button class="tab-btn active" onclick="showTab('theory',this)">📖 Θεωρία</button>
+  <button class="tab-btn" onclick="showTab('ex1',this)">Άσκ. 1</button>
+  <button class="tab-btn" onclick="showTab('ex2',this)">Άσκ. 2</button>
+  <button class="tab-btn" onclick="showTab('prob',this)">Προβλήματα</button>
+  <button class="tab-btn" onclick="showTab('tf',this)">Σ / Λ</button>
+  <button class="tab-btn" onclick="showTab('quiz',this)">🎮 Κουίζ</button>
+</div>
+
+<!-- ══════ THEORY ══════ -->
+<div id="tab-theory" class="tab-panel active">
+  <div class="card">
+    <div class="card-header orange">📖 Τι είναι εξίσωση;</div>
+    <div class="card-body">
+      <p>Μια ισότητα που περιέχει έναν <strong>άγνωστο αριθμό</strong> (x, y, z…) λέγεται <strong>εξίσωση</strong>.</p>
+      <p style="margin-top:8px">Η τιμή που κάνει την εξίσωση αληθή ονομάζεται <strong>λύση</strong> της εξίσωσης.</p>
+      <div class="theory-box" style="margin-top:14px">
+        <p>🔑 <strong>Κανόνας:</strong> Όταν ο άγνωστος είναι <em>προσθετέος</em>, τον βρίσκω αφαιρώντας τον γνωστό προσθετέο από το άθροισμα.</p>
+        <p style="margin-top:8px; font-size:1.05em; text-align:center"><strong>x + α = β &nbsp;⟹&nbsp; x = β − α</strong></p>
+      </div>
+      <p style="margin-top:12px; font-size:0.9em; color:#555">💡 Σκέψου την εξίσωση σαν <strong>ζυγαριά</strong>: ό,τι κάνεις στη μία πλευρά, πρέπει να το κάνεις και στην άλλη!</p>
+
+      <table class="example-table" style="margin-top:16px">
+        <tr><th>Εξίσωση</th><th>Σκέψη</th><th>Λύση</th><th>Έλεγχος</th></tr>
+        <tr><td><strong>x + 5 = 12</strong></td><td>x = 12 − 5</td><td class="correct-val">x = 7</td><td>7 + 5 = 12 ✓</td></tr>
+        <tr><td><strong>x + 8 = 23</strong></td><td>x = 23 − 8</td><td class="correct-val">x = 15</td><td>15 + 8 = 23 ✓</td></tr>
+        <tr><td><strong>x + 1,5 = 4</strong></td><td>x = 4 − 1,5</td><td class="correct-val">x = 2,5</td><td>2,5 + 1,5 = 4 ✓</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header navy">🪜 Βήματα λύσης προβλήματος</div>
+    <div class="card-body">
+      <ol class="steps-list">
+        <li>Ορίζω τον <strong>άγνωστο</strong>: «Ονομάζω x το ζητούμενο ποσό.»</li>
+        <li>Σχηματίζω την <strong>εξίσωση</strong> με βάση τα δεδομένα.</li>
+        <li><strong>Λύνω</strong>: αφαιρώ τον γνωστό προσθετέο από το άθροισμα.</li>
+        <li>Κάνω <strong>έλεγχο</strong>: αντικαθιστώ και επαληθεύω.</li>
+        <li>Γράφω την <strong>απάντηση</strong>.</li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ EX 1: νοερή ══════ -->
+<div id="tab-ex1" class="tab-panel">
+  <div class="card">
+    <div class="card-header orange">✏️ Άσκηση 1η — Λύσε με τον νου</div>
+    <div class="card-body">
+      <div class="instructions">Βρες τον άγνωστο νοερά και γράψε τη λύση στο πεδίο.</div>
+      <div id="ex1-rows"></div>
+      <button class="check-btn" onclick="checkEx1()">✓ Έλεγχος</button>
+      <button class="reset-btn" onclick="resetEx1()">↺ Επανεκκίνηση</button>
+      <div id="ex1-score"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ EX 2: λύσε γράφοντας ══════ -->
+<div id="tab-ex2" class="tab-panel">
+  <div class="card">
+    <div class="card-header orange">✏️ Άσκηση 2η — Λύσε &amp; κάνε έλεγχο</div>
+    <div class="card-body">
+      <div class="instructions">Λύσε κάθε εξίσωση και επαλήθευσε αντικαθιστώντας.</div>
+      <div id="ex2-rows"></div>
+      <button class="check-btn" onclick="checkEx2()">✓ Έλεγχος</button>
+      <button class="reset-btn" onclick="resetEx2()">↺ Επανεκκίνηση</button>
+      <div id="ex2-score"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ PROBLEMS ══════ -->
+<div id="tab-prob" class="tab-panel">
+  <div class="card">
+    <div class="card-header navy">📝 Προβλήματα</div>
+    <div class="card-body">
+      <div id="prob-blocks"></div>
+      <button class="check-btn" onclick="checkProb()">✓ Έλεγχος</button>
+      <button class="reset-btn" onclick="resetProb()">↺ Επανεκκίνηση</button>
+      <div id="prob-score"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ TRUE/FALSE ══════ -->
+<div id="tab-tf" class="tab-panel">
+  <div class="card">
+    <div class="card-header green">✔ Σωστό ή Λάθος;</div>
+    <div class="card-body">
+      <div class="instructions">Διάλεξε Σ (Σωστό) ή Λ (Λάθος) για κάθε πρόταση.</div>
+      <div id="tf-rows"></div>
+      <button class="check-btn" onclick="checkTF()">✓ Έλεγχος</button>
+      <button class="reset-btn" onclick="resetTF()">↺ Επανεκκίνηση</button>
+      <div id="tf-score"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ QUIZ GAME ══════ -->
+<div id="tab-quiz" class="tab-panel">
+  <div id="quiz-panel">
+    <div class="quiz-header">
+      <h2>🎮 Κουίζ Εξισώσεων</h2>
+      <p style="color:#666;font-size:0.9em">Βρες τη λύση κάθε εξίσωσης πριν τελειώσει ο χρόνος!</p>
+    </div>
+    <div id="quiz-start-screen" style="text-align:center;padding:30px 10px;">
+      <div style="font-size:3em;margin-bottom:16px">🧮</div>
+      <p style="font-size:1.1em;color:var(--navy);margin-bottom:20px">Πόσες εξισώσεις μπορείς να λύσεις σωστά;<br>Υπάρχουν <strong>10 ερωτήσεις</strong>.</p>
+      <button onclick="startQuiz()" style="padding:14px 36px;background:var(--orange);color:white;border:none;border-radius:10px;font-size:1.1em;font-family:inherit;font-weight:bold;cursor:pointer;">▶ Έναρξη Κουίζ</button>
+    </div>
+    <div id="quiz-game" style="display:none">
+      <div style="max-width:580px;margin:0 auto">
+        <div class="progress-bar-wrap"><div class="progress-bar" id="quiz-bar" style="width:0%"></div></div>
+        <div class="q-counter" id="q-counter">Ερώτηση 1 / 10</div>
+      </div>
+      <div class="quiz-card">
+        <div class="quiz-eq" id="quiz-eq">x + ? = ?</div>
+        <div class="quiz-options" id="quiz-opts"></div>
+        <div class="quiz-feedback" id="quiz-fb"></div>
+        <button class="quiz-next" id="quiz-next" onclick="nextQuestion()">Επόμενο ▶</button>
+      </div>
+    </div>
+    <div id="quiz-result-screen" style="display:none">
+      <div class="quiz-result card">
+        <div class="card-body">
+          <div class="stars" id="quiz-stars"></div>
+          <div class="big-score" id="quiz-big-score"></div>
+          <div class="msg" id="quiz-msg"></div>
+          <button class="quiz-restart" onclick="restartQuiz()">↺ Παίξε ξανά</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- container -->
+
+<script>
+// ══════ UTILS ══════
+function norm(s){
+  return s.trim().replace(',','.')
+    .replace(/\s+/g,'');
+}
+function numOk(val, correct){
+  try {
+    return Math.abs(parseFloat(norm(val)) - parseFloat(norm(String(correct)))) < 0.001;
+  } catch { return false; }
+}
+function showScore(id, ok, total){
+  const pct = Math.round(ok/total*100);
+  const cls = pct>=90?'sc-great':pct>=60?'sc-ok':'sc-low';
+  const msg = pct>=90?'🎉 Μπράβο!':pct>=60?'👍 Συνέχισε!':'📚 Ξαναπροσπάθησε!';
+  document.getElementById(id).innerHTML = `<div class="score ${cls}">${ok}/${total} σωστά (${pct}%) — ${msg}</div>`;
+}
+function showTab(id, btn){
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ══════ EX 1 ══════
+const ex1Data = [
+  {eq:"x + 4 = 11", ans:7}, {eq:"x + 9 = 20", ans:11},
+  {eq:"x + 7 = 15", ans:8}, {eq:"x + 13 = 30", ans:17},
+  {eq:"x + 6 = 14", ans:8}, {eq:"x + 25 = 40", ans:15},
+  {eq:"x + 3 = 12", ans:9}, {eq:"x + 18 = 45", ans:27},
+];
+function buildEx1(){
+  document.getElementById('ex1-rows').innerHTML = ex1Data.map((d,i)=>
+    `<div class="fill-row">
+      <label>${i+1}.</label>
+      <strong>${d.eq}</strong>
+      <span style="margin:0 4px">→  x =</span>
+      <input class="fill-input" id="e1-${i}" type="text" autocomplete="off">
+    </div>`).join('');
+  document.getElementById('ex1-score').innerHTML='';
+}
+function checkEx1(){
+  let ok=0;
+  ex1Data.forEach((d,i)=>{
+    const inp=document.getElementById('e1-'+i);
+    inp.classList.remove('ok','err');
+    if(!inp.value.trim()) return;
+    if(numOk(inp.value,d.ans)){inp.classList.add('ok');ok++;}
+    else{inp.classList.add('err');inp.title='Σωστό: '+d.ans;}
+  });
+  showScore('ex1-score',ok,ex1Data.length);
+}
+function resetEx1(){buildEx1();}
+
+// ══════ EX 2 ══════
+const ex2Data = [
+  {eq:"x + 14 = 32", ans:18, check:"18 + 14 = 32"},
+  {eq:"x + 27 = 61", ans:34, check:"34 + 27 = 61"},
+  {eq:"x + 4,5 = 10", ans:5.5, check:"5,5 + 4,5 = 10"},
+  {eq:"x + 1,25 = 3", ans:1.75, check:"1,75 + 1,25 = 3"},
+  {eq:"x + 36 = 100", ans:64, check:"64 + 36 = 100"},
+  {eq:"x + 2,8 = 7", ans:4.2, check:"4,2 + 2,8 = 7"},
+];
+function buildEx2(){
+  document.getElementById('ex2-rows').innerHTML = ex2Data.map((d,i)=>
+    `<div style="background:var(--lightblue);border-left:4px solid var(--navy);padding:10px 14px;border-radius:0 8px 8px 0;margin:10px 0;">
+      <strong>${d.eq}</strong>
+      <div class="fill-row" style="margin-top:8px">
+        <span style="font-size:0.9em">Λύση: x =</span>
+        <input class="fill-input" id="e2-${i}" type="text" autocomplete="off">
+        <span style="font-size:0.85em;color:#888">Έλεγχος: _____ + _____ = _____</span>
+      </div>
+    </div>`).join('');
+  document.getElementById('ex2-score').innerHTML='';
+}
+function checkEx2(){
+  let ok=0;
+  ex2Data.forEach((d,i)=>{
+    const inp=document.getElementById('e2-'+i);
+    inp.classList.remove('ok','err');
+    if(!inp.value.trim()) return;
+    if(numOk(inp.value,d.ans)){inp.classList.add('ok');ok++;}
+    else{inp.classList.add('err');inp.title='Σωστό: '+d.ans;}
+  });
+  showScore('ex2-score',ok,ex2Data.length);
+}
+function resetEx2(){buildEx2();}
+
+// ══════ PROBLEMS ══════
+const probData = [
+  {
+    num:"1ο", title:"Τα χρήματα του Νίκου",
+    text:"Ο Νίκος έχει μαζέψει <strong>38,50 €</strong> από τα γενέθλιά του. Θέλει να αγοράσει ένα ποδήλατο που κοστίζει <strong>95 €</strong>. Πόσα χρήματα ακόμα χρειάζεται;",
+    varLabel:"Μεταβλητή:", varHint:"Ονομάζω x = ...",
+    eqLabel:"Εξίσωση:", eqAns:"x + 38.5 = 95", eqHint:"x + 38,50 = 95",
+    solLabel:"Λύση x =", solAns:56.5,
+    ansLabel:"Απάντηση:", ansHint:"56,50 €"
+  },
+  {
+    num:"2ο", title:"Ο αριθμός",
+    text:"Σκέφτομαι έναν αριθμό. Του προσθέτω <strong>17</strong> και βρίσκω <strong>45</strong>. Ποιος είναι ο αριθμός;",
+    varLabel:"Μεταβλητή:", varHint:"Ονομάζω x = ...",
+    eqLabel:"Εξίσωση:", eqAns:"x + 17 = 45", eqHint:"x + 17 = 45",
+    solLabel:"Λύση x =", solAns:28,
+    ansLabel:"Απάντηση:", ansHint:"28"
+  },
+  {
+    num:"3ο", title:"Η ζυγαριά",
+    text:"Σε μια ζυγαριά, στον έναν δίσκο τοποθετούμε <strong>68 γρ.</strong> και στον άλλο <strong>120 γρ.</strong> Πόσα γραμμάρια ακόμα πρέπει να βάλουμε στον πρώτο δίσκο για να ισορροπήσει η ζυγαριά;",
+    varLabel:"Μεταβλητή:", varHint:"Ονομάζω x = ...",
+    eqLabel:"Εξίσωση:", eqAns:"68 + x = 120", eqHint:"68 + x = 120",
+    solLabel:"Λύση x =", solAns:52,
+    ansLabel:"Απάντηση:", ansHint:"52 γρ."
+  },
+  {
+    num:"4ο", title:"Αγορές",
+    text:"Η Σοφία αγόρασε ένα βιβλίο και ένα στυλό. Το στυλό κόστιζε <strong>2,80 €</strong>. Συνολικά πλήρωσε <strong>8,40 €</strong>. Πόσο κόστιζε το βιβλίο;",
+    varLabel:"Μεταβλητή:", varHint:"Ονομάζω x = ...",
+    eqLabel:"Εξίσωση:", eqAns:"x + 2.8 = 8.4", eqHint:"x + 2,80 = 8,40",
+    solLabel:"Λύση x =", solAns:5.6,
+    ansLabel:"Απάντηση:", ansHint:"5,60 €"
+  },
+];
+function buildProb(){
+  document.getElementById('prob-blocks').innerHTML = probData.map((d,i)=>
+    `<div class="prob-fill-block">
+      <div style="font-weight:bold;color:var(--orange);margin-bottom:6px">Πρόβλημα ${d.num} — ${d.title}</div>
+      <div class="prob-text">${d.text}</div>
+      <div class="prob-step">
+        <span>${d.varLabel}</span>
+        <input class="fill-input" style="width:220px" id="pv-${i}" type="text" placeholder="Ονομάζω x ...">
+      </div>
+      <div class="prob-step">
+        <span>${d.eqLabel}</span>
+        <input class="fill-input" style="width:160px" id="pe-${i}" type="text" autocomplete="off" placeholder="π.χ. x + ... = ...">
+      </div>
+      <div class="prob-step">
+        <span>${d.solLabel}</span>
+        <input class="fill-input" id="ps-${i}" type="text" autocomplete="off">
+        <span style="font-size:0.85em;color:#888;font-style:italic">${d.ansHint}</span>
+      </div>
+    </div>`
+  ).join('<hr style="border:none;border-top:1px solid #ddd;margin:18px 0">');
+  document.getElementById('prob-score').innerHTML='';
+}
+function checkProb(){
+  let ok=0, total=0;
+  probData.forEach((d,i)=>{
+    // check equation (flexible)
+    const eInp=document.getElementById('pe-'+i);
+    eInp.classList.remove('ok','err');
+    // check solution
+    const sInp=document.getElementById('ps-'+i);
+    sInp.classList.remove('ok','err');
+    total++;
+    if(sInp.value.trim() && numOk(sInp.value,d.solAns)){sInp.classList.add('ok');ok++;}
+    else if(sInp.value.trim()){sInp.classList.add('err');sInp.title='Σωστό: '+d.ansHint;}
+  });
+  showScore('prob-score',ok,total);
+}
+function resetProb(){buildProb();}
+
+// ══════ TRUE/FALSE ══════
+const tfData = [
+  {text:"Η λύση της εξίσωσης x + 6 = 10 είναι το 4.", ans:"S"},
+  {text:"Η λύση της εξίσωσης x + 3 = 3 είναι το 0.", ans:"S"},
+  {text:"Η λύση της εξίσωσης 15 + a = 15 είναι το 1.", ans:"L", explain:"Η λύση είναι 0, γιατί 15 + 0 = 15."},
+  {text:"Για να λύσω εξίσωση πρόσθεσης, κάνω αφαίρεση.", ans:"S"},
+  {text:"Η εξίσωση x + 5 = 12 λύνεται ως x = 12 + 5.", ans:"L", explain:"Λάθος! Σωστό: x = 12 − 5 = 7."},
+  {text:"Η λύση x = 8 επαληθεύει την εξίσωση x + 9 = 17.", ans:"S"},
+];
+function buildTF(){
+  document.getElementById('tf-rows').innerHTML = tfData.map((d,i)=>
+    `<div class="tf-row" id="tf-row-${i}">
+      <div class="tf-text">${i+1}. ${d.text}</div>
+      <div class="tf-btns">
+        <button class="tf-btn S" data-i="${i}" data-v="S" onclick="selTF(this)">Σ</button>
+        <button class="tf-btn L" data-i="${i}" data-v="L" onclick="selTF(this)">Λ</button>
+      </div>
+    </div>`).join('');
+  document.getElementById('tf-score').innerHTML='';
+}
+function selTF(btn){
+  const i=btn.dataset.i;
+  document.querySelectorAll(`[data-i="${i}"]`).forEach(b=>b.classList.remove('selected-S','selected-L'));
+  btn.classList.add('selected-'+btn.dataset.v);
+}
+function checkTF(){
+  let ok=0;
+  tfData.forEach((d,i)=>{
+    const btns=document.querySelectorAll(`[data-i="${i}"]`);
+    btns.forEach(b=>{
+      if(b.classList.contains('selected-S')||b.classList.contains('selected-L')){
+        const sel=b.classList.contains('selected-S')?'S':'L';
+        if(sel===d.ans){b.classList.add('correct');ok++;}
+        else b.classList.add('wrong');
+        b.classList.add('disabled');
+        btns.forEach(bb=>{if(!bb.classList.contains('selected-S')&&!bb.classList.contains('selected-L'))bb.classList.add('disabled');});
+      }
+    });
+    if(d.explain){
+      const row=document.getElementById('tf-row-'+i);
+      if(!row.querySelector('.explain-note')){
+        const note=document.createElement('div');
+        note.className='explain-note';
+        note.style.cssText='font-size:0.82em;color:#666;font-style:italic;margin-top:4px;padding-left:8px;';
+        note.textContent='💡 '+d.explain;
+        row.appendChild(note);
+      }
+    }
+  });
+  showScore('tf-score',ok,tfData.length);
+}
+function resetTF(){buildTF();}
+
+// ══════ QUIZ GAME ══════
+const quizPool = [
+  {eq:"x + 5 = 12", ans:7},
+  {eq:"x + 8 = 20", ans:12},
+  {eq:"x + 3 = 10", ans:7},
+  {eq:"x + 15 = 30", ans:15},
+  {eq:"x + 9 = 25", ans:16},
+  {eq:"x + 4 = 17", ans:13},
+  {eq:"x + 11 = 28", ans:17},
+  {eq:"x + 7 = 32", ans:25},
+  {eq:"x + 6 = 21", ans:15},
+  {eq:"x + 23 = 50", ans:27},
+  {eq:"x + 14 = 40", ans:26},
+  {eq:"x + 19 = 45", ans:26},
+  {eq:"x + 30 = 72", ans:42},
+  {eq:"x + 5 = 5", ans:0},
+  {eq:"x + 1 = 100", ans:99},
+  {eq:"x + 25 = 60", ans:35},
+  {eq:"x + 17 = 50", ans:33},
+  {eq:"x + 8 = 35", ans:27},
+];
+
+let quizQ=[], quizIdx=0, quizScore=0;
+
+function shuffle(a){return a.sort(()=>Math.random()-0.5);}
+
+function genWrongOptions(correct){
+  const opts=new Set([correct]);
+  const deltas=[-3,-2,-1,1,2,3,5,10];
+  shuffle(deltas);
+  for(const d of deltas){
+    const w=correct+d;
+    if(w>=0 && !opts.has(w)) opts.add(w);
+    if(opts.size>=4) break;
+  }
+  while(opts.size<4){
+    const w=correct+Math.floor(Math.random()*20)+1;
+    opts.add(w);
+  }
+  return shuffle([...opts].slice(0,4));
+}
+
+function startQuiz(){
+  quizQ = shuffle([...quizPool]).slice(0,10);
+  quizIdx=0; quizScore=0;
+  document.getElementById('quiz-start-screen').style.display='none';
+  document.getElementById('quiz-result-screen').style.display='none';
+  document.getElementById('quiz-game').style.display='block';
+  showQuestion();
+}
+
+function showQuestion(){
+  const q=quizQ[quizIdx];
+  document.getElementById('quiz-bar').style.width=((quizIdx)/10*100)+'%';
+  document.getElementById('q-counter').textContent=`Ερώτηση ${quizIdx+1} / 10`;
+  document.getElementById('quiz-eq').textContent=q.eq;
+  document.getElementById('quiz-fb').textContent='';
+  document.getElementById('quiz-fb').className='quiz-feedback';
+  document.getElementById('quiz-next').style.display='none';
+
+  const opts=genWrongOptions(q.ans);
+  document.getElementById('quiz-opts').innerHTML=opts.map(o=>
+    `<button class="quiz-opt" data-v="${o}" onclick="answerQuiz(this,${q.ans})">${o}</button>`
+  ).join('');
+}
+
+function answerQuiz(btn, correct){
+  const chosen=parseInt(btn.dataset.v);
+  document.querySelectorAll('.quiz-opt').forEach(b=>b.classList.add('disabled'));
+  const fb=document.getElementById('quiz-fb');
+  if(chosen===correct){
+    btn.classList.add('correct');
+    fb.textContent='✅ Σωστά!'; fb.className='quiz-feedback ok';
+    quizScore++;
+  } else {
+    btn.classList.add('wrong');
+    document.querySelectorAll('.quiz-opt').forEach(b=>{if(parseInt(b.dataset.v)===correct) b.classList.add('correct');});
+    fb.textContent=`❌ Λάθος! Σωστό: x = ${correct}`; fb.className='quiz-feedback no';
+  }
+  document.getElementById('quiz-next').style.display='block';
+}
+
+function nextQuestion(){
+  quizIdx++;
+  if(quizIdx>=10){
+    endQuiz();
+  } else {
+    showQuestion();
+  }
+}
+
+function endQuiz(){
+  document.getElementById('quiz-bar').style.width='100%';
+  document.getElementById('quiz-game').style.display='none';
+  document.getElementById('quiz-result-screen').style.display='block';
+  document.getElementById('quiz-big-score').textContent=quizScore+'/10';
+  const stars = quizScore>=9?'⭐⭐⭐':quizScore>=7?'⭐⭐':quizScore>=5?'⭐':'';
+  document.getElementById('quiz-stars').textContent=stars;
+  const msgs=['Συνέχισε να προσπαθείς! 💪','Καλή αρχή! Εξάσκησε λίγο ακόμα 📚','Πολύ καλά! 👍','Εξαιρετικό! 🎉','Τέλειο! Είσαι πρωταθλητής! 🏆'];
+  document.getElementById('quiz-msg').textContent=msgs[Math.min(Math.floor(quizScore/2.1),4)];
+}
+
+function restartQuiz(){
+  document.getElementById('quiz-result-screen').style.display='none';
+  document.getElementById('quiz-start-screen').style.display='block';
+}
+
+// ══════ INIT ══════
+buildEx1(); buildEx2(); buildProb(); buildTF();
+</script>
+</body>
+</html>
